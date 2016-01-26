@@ -44,11 +44,15 @@ int main(){
   for(int i=1; i<=Na; i++)
   {
    for(int j=0; j<Nk; j++){
-
-
+    
+    step(u1, u0, dt, dx, D,N);
+    h = u0;
+    u0 = u1;
+    u1 = h;
    }
    strm.str("");
    strm << "u_" << i;
+   t += dt;
    writeToFile(u0, strm.str(), dx, xmin, N,t);
   }
 
@@ -61,8 +65,15 @@ int main(){
 //-----------------------------------------------
 void step(double* const f1, double* const f0,
           const double dt, const double dx,
-          const double D, const int N)
-{
+          const double D, const int N){ 
+  f1[0] = D*dt/(dx*dx) * (f0[1] - 2*f0[0] +f0[N-2]) + f0[0];	//periodische Randbedingungen ( f0[-1] = f0[N-2])
+  
+  for(int i=1;i<N-2;i++){
+  f1[i] = D*dt/(dx*dx) * (f0[i+1] - 2*f0[i] + f0[i-1]) + f0[i];
+  }
+ 
+ f1[N-1] = D*dt/(dx*dx) * (f0[1] - 2*f0[N-1] + f0[N-2]) + f0[N-1]; // f0[N] = f0[1]
+  
 
 }
 //-----------------------------------------------
